@@ -9,16 +9,24 @@ import { Tip } from '../../components/Tip';
 import { Item } from '../../components/Item';
 import { Button } from '../../components/Button';
 
-export function Home() {
-  const [selectedImageUri, setSelectedImageUri] = useState(' ');
+import { api } from '../../services/api';
 
+export function Home() {
+  const [selectedImageUri, setSelectedImageUri] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to select an image from the gallery
   async function handleSelectImage() {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
+      // If the user denied the permission
       if (status !== ImagePicker.PermissionStatus.GRANTED) {
         return alert('Sorry, we need camera roll permissions to make this work!');        
       }
+
+      // If the user allowed the permission
+      setIsLoading(true);
 
       const response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -27,15 +35,28 @@ export function Home() {
         quality: 1,
       });
 
+      // If the user canceled the action
       if (response.canceled){
-        return;
+        return setIsLoading(false);
       }
-
+      
+      // If the user selected an image
       if (!response.canceled){
-        setSelectedImageUri(response.assets[0].uri);
+
+        // Manipulating the image before send to API
+        const imgManipulated = await ImageManipulator.manipulateAsync(
+          response.assets[0].uri,
+          [{ resize: { width: 900 } }],
+          { 
+            compress: 1, 
+            format: ImageManipulator.SaveFormat.JPEG, 
+            base64: true 
+          }
+        );
+
+        setSelectedImageUri(imgManipulated.uri);
+        handleSendImage(imgManipulated.base64);
       }
-
-
 
     } catch (error) {
       console.log(error);
@@ -43,9 +64,30 @@ export function Home() {
     
   }
 
+  // Function to send the image to the API
+  async function handleSendImage(imageBase64: string | undefined) {
+    const response = await api.post(`/v2/models/${process.env.EXPO_PUBLIC_API_MODEL_ID}/versions/${process.env.EXPO_PUBLIC_API_MODEL_VERSION_ID}/outputs`, {
+      "user_app_id": {
+        "user_id": process.env.EXPO_PUBLIC_API_USER_ID,
+        "app_id": process.env.EXPO_PUBLIC_API_APP_ID,
+      },
+      "inputs": [
+        {
+          "data": {
+            "image": {
+              "base64": imageBase64,
+            }
+          }
+        }
+      ]
+    })
+      // 3105
+      console.log(response.data);
+  }
+
   return (
-    <View style={styles.container}> 
-      <Button onPress={handleSelectImage} />
+    <View style={styles.container}>
+      <Button onPress={handleSelectImage} disabled={isLoading} />
 
       {
         selectedImageUri ?
@@ -56,12 +98,12 @@ export function Home() {
           />
           :
           <Text style={styles.description}>
-            Select an image to analize...
+            Selecione a foto do seu prato para analizar.
           </Text>
       }
 
       <View style={styles.bottom}>
-        <Tip message="Where is your tipr" />
+        <Tip message="Where is your tipe" />
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 24 }}>
           <View style={styles.items}>
@@ -72,3 +114,9 @@ export function Home() {
     </View>
   );
 }
+
+
+
+// Axios, network problems, error handling
+// Also trying to fix the issue with the vscode terminal
+// https://github.com/flathub/com.visualstudio.code/issues/370
