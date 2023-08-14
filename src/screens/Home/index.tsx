@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 

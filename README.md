@@ -1,5 +1,5 @@
 <div>
-  <h1 align="center">healthyTips</h1>
+  <h1 align="center">HealthyTips</h1>
 </div>
 
 <p align="center">
@@ -9,7 +9,7 @@
 
 
 ## About
-Eat well and stay healthy! This project was developed to help people to have a healthier life, with tips and recipes to improve their life.
+Eat well and stay healthy! This project was developed to help people have a healthier life.
 
 ## Mobile
 - Expo
@@ -26,6 +26,7 @@ Eat well and stay healthy! This project was developed to help people to have a h
 ## References
 This project was possible thanks to `RocketSeat` community, which is a community of developers who are always looking to improve their skills and help each other.
 - [RocketSeat](https://rocketseat.com.br/)
+- [Rodrigo Gonçalves](https://github.com/rodrigorgtic)
 - [Clarifai AI](https://www.clarifai.com/)
 
 ## Copyright Disclaimer
