@@ -7,11 +7,11 @@ type Props = {
   message: string;
 }
 
-export function Tip({ message }: Props) {
+export function TipUnhealty({ message }: Props) {
   return (
     <View style={styles.container}>
       <MaterialIcons
-        name="restaurant"
+        name="dangerous"
         color="#FFFFFF"
         size={24}
       />

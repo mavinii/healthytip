@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, ScrollView, Text, View, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -8,10 +8,11 @@ import { foodContains } from '../../utils/foodContains';
 
 import { styles } from './styles';
 
-import { Tip } from '../../components/Tip';
+import { TipHealty } from '../../components/TipHealty';
 import { Button } from '../../components/Button';
 import { Loading } from '../../components/Loading';
 import { Item, ItemProps } from '../../components/Item';
+import { TipUnhealty } from '../../components/TipUnhealty';
 
 export function Home() {
   const [selectedImageUri, setSelectedImageUri] = useState('');
@@ -96,7 +97,7 @@ export function Home() {
     const isVegetable = foodContains(foods, 'vegetable');
     setMessage(
       isVegetable ? 
-      'Your plate looks healty' : 'Oh no, it dosent look healty.'
+      'Your plate looks healthy' : 'Oh no, it dosent look healthy.'
       );
 
     setItems(foods);
@@ -124,7 +125,16 @@ export function Home() {
         {
           isLoading ? <Loading /> :
           <>
-            { message && <Tip message={message} /> }
+          
+            {/* If Unhealty  */}
+            {message && !foodContains(items, 'vegetable') && (
+              <TipUnhealty message={message} />
+            )}
+
+            {/* If Healty */}
+            {message && foodContains(items, 'vegetable') && (
+              <TipHealty message={message} />
+            )}
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 24 }}>
               <View style={styles.items}>

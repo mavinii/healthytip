@@ -1,15 +1,15 @@
 <div>
-  <h1 align="center">HealthTips</h1>
+  <h1 align="center">healthyTips</h1>
 </div>
 
 <p align="center">
-  <img alt="HealthTips" src="./preview/preview1.png" width="49%" />
-  <img alt="HealthTips" src="./preview/preview2.png" width="49%" />
+  <img alt="healthyTips" src="./preview/preview1.png" width="49%" />
+  <img alt="healthyTips" src="./preview/preview2.png" width="49%" />
 </p>
 
 
 ## About
-Eat well and stay healthy! This project was developed to help people to have a healthier life, with tips and recipes to improve their health.
+Eat well and stay healthy! This project was developed to help people to have a healthier life, with tips and recipes to improve their life.
 
 ## Mobile
 - Expo
