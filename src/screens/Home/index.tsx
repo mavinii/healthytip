@@ -3,17 +3,21 @@ import { Image, ScrollView, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
+import { api } from '../../services/api';
+import { foodContains } from '../../utils/foodContains';
+
 import { styles } from './styles';
 
 import { Tip } from '../../components/Tip';
-import { Item } from '../../components/Item';
 import { Button } from '../../components/Button';
-
-import { api } from '../../services/api';
+import { Loading } from '../../components/Loading';
+import { Item, ItemProps } from '../../components/Item';
 
 export function Home() {
   const [selectedImageUri, setSelectedImageUri] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [items, setItems] = useState<ItemProps[]>([]);
+  const [message, setMessage] = useState('');
 
   // Function to select an image from the gallery
   async function handleSelectImage() {
@@ -78,11 +82,25 @@ export function Home() {
               "base64": imageBase64,
             }
           }
-        }
+           }
       ]
     })
-      // 3105
-      console.log(response.data);
+
+    const foods = response.data.outputs[0].data.concepts.map((concept: any) => {
+      return {
+        name: concept.name,
+        percentage: `${Math.round(concept.value * 100)}%`
+      }
+    })
+
+    const isVegetable = foodContains(foods, 'vegetable');
+    setMessage(
+      isVegetable ? 
+      'Your plate looks healty' : 'Oh no, it dosent look healty.'
+      );
+
+    setItems(foods);
+    setIsLoading(false);
   }
 
   return (
@@ -98,25 +116,28 @@ export function Home() {
           />
           :
           <Text style={styles.description}>
-            Selecione a foto do seu prato para analizar.
+            Select an image from your gallery.
           </Text>
       }
 
       <View style={styles.bottom}>
-        <Tip message="Where is your tipe" />
+        {
+          isLoading ? <Loading /> :
+          <>
+            { message && <Tip message={message} /> }
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 24 }}>
-          <View style={styles.items}>
-            <Item data={{ name: 'Vegetal', percentage: '95%' }} />
-          </View>
-        </ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 24 }}>
+              <View style={styles.items}>
+                {
+                  items.map((item, index) => (
+                    <Item key={index} data={item} />
+                  ))
+                }
+              </View>
+            </ScrollView>
+          </>
+        }
       </View>
     </View>
   );
 }
-
-
-
-// Axios, network problems, error handling
-// Also trying to fix the issue with the vscode terminal
-// https://github.com/flathub/com.visualstudio.code/issues/370
